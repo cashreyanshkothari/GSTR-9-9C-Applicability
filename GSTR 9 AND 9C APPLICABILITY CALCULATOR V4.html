@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSTR 9/9C Master Tool | FY 24-25</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --card-bg: #ffffff;
+            --bg-color: #f3f4f6;
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            
+            /* Status Colors */
+            --green: #10b981;
+            --green-light: #d1fae5;
+            --red: #ef4444;
+            --red-light: #fee2e2;
+            --orange: #f59e0b;
+            --orange-light: #fef3c7;
+            
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Main Layout */
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 900px) {
+            .wrapper {
+                flex-direction: row;
+                height: 85vh; /* Fixed height for desktop look */
+            }
+        }
+
+        /* Left Side: Inputs */
+        .left-panel {
+            padding: 30px;
+            flex: 1;
+            background: #fff;
+            overflow-y: auto;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .header-brand {
+            margin-bottom: 30px;
+        }
+
+        .header-brand h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        .header-brand p {
+            margin: 5px 0 0;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .input-section label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+        
+        .input-desc {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .currency-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 15px 14px 35px; /* space for icon */
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Right Side: Dashboard */
+        .right-panel {
+            flex: 1.2;
+            background: var(--bg-color);
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .total-card {
+            background: var(--primary-gradient);
+            padding: 25px;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+            text-align: center;
+        }
+
+        .total-card h3 {
+            margin: 0;
+            font-weight: 500;
+            opacity: 0.9;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0 0;
+        }
+
+        /* Result Cards */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media(min-width: 600px) {
+            .result-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border-left: 6px solid #e5e7eb; /* Default gray */
+            transition: transform 0.2s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Dynamic Classes */
+        .border-green { border-left-color: var(--green); }
+        .bg-green { background-color: var(--green-light); color: var(--green); }
+        
+        .border-red { border-left-color: var(--red); }
+        .bg-red { background-color: var(--red-light); color: var(--red); }
+        
+        .border-gray { border-left-color: #9ca3af; }
+        .bg-gray { background-color: #f3f4f6; color: #6b7280; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            color: var(--text-light);
+        }
+
+        .risk-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .risk-title {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-btn {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .reset-btn:hover { background: #f9fafb; border-color: #9ca3af; }
+
+        /* Refined Footer Styles */
+        .footer-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .footer-name {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        
+        .footer-sub {
+            color: var(--text-light);
+            font-size: 0.75rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-contacts {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .contact-link:hover {
+            color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .contact-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="left-panel">
+        <div class="header-brand">
+            <h1>GST Pulse</h1>
+            <p>Compliance Checker FY 2024-25</p>
+        </div>
+
+        <form id="calculator">
+            <div class="input-section">
+                <label>Taxable Supplies</label>
+                <span class="input-desc">B2B + B2C (Inter & Intra State)</span>
+                <div class="input-group">
+                    <span class="currency-icon">₹</span>
+                    <input type="number" class="calc-input" placeholder="0" oninput="runLogic()">
+                </div>
+            </div>
+
+            <div class="input-section">
+                <label>Exempt / Nil Rated</label>
+                <span class="input-desc">Includes Alcohol, Petrol, etc.</span>
+                <div class="input-group">
+                    <span class="currency-icon">₹</span>
+                    <input type="number" class="calc-input" placeholder="0" oninput="runLogic()">
+                </div>
+            </div>
+
+            <div class="input-section">
+                <label>Exports / SEZ</label>
+                <span class="input-desc">Zero Rated Supplies</span>
+                <div class="input-group">
+                    <span class="currency-icon">₹</span>
+                    <input type="number" class="calc-input" placeholder="0" oninput="runLogic()">
+                </div>
+            </div>
+
+            <div class="input-section">
+                <label>Stock Transfers</label>
+                <span class="input-desc">To distinct persons (Same PAN)</span>
+                <div class="input-group">
+                    <span class="currency-icon">₹</span>
+                    <input type="number" class="calc-input" placeholder="0" oninput="runLogic()">
+                </div>
+            </div>
+            
+            <button type="button" class="reset-btn" onclick="resetAll()">Clear All Fields</button>
+        </form>
+    </div>
+
+    <div class="right-panel">
+        <div class="total-card">
+            <h3>Aggregate Turnover</h3>
+            <div class="total-amount" id="displayTotal">₹ 0</div>
+            <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">Calculated as per Sec 2(6) of CGST Act</div>
+        </div>
+
+        <div class="result-grid">
+            <div class="status-card border-gray" id="card9">
+                <div class="card-header">
+                    <div class="card-title">GSTR 9</div>
+                    <span class="badge bg-gray" id="badge9">Waiting</span>
+                </div>
+                <div class="detail-row">
+                    <span>Threshold:</span>
+                    <strong>₹ 2 Crore</strong>
+                </div>
+                <div class="detail-row" style="margin-top:15px; font-size:0.75rem;">
+                    Ref: Notification 15/2025-CT
+                </div>
+            </div>
+
+            <div class="status-card border-gray" id="card9c">
+                <div class="card-header">
+                    <div class="card-title">GSTR 9C</div>
+                    <span class="badge bg-gray" id="badge9c">Waiting</span>
+                </div>
+                <div class="detail-row">
+                    <span>Threshold:</span>
+                    <strong>₹ 5 Crore</strong>
+                </div>
+                <div class="detail-row" style="margin-top:15px; font-size:0.75rem;">
+                    Ref: Rule 80(3)
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-box">
+            <div class="risk-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Late Fee Impact
+            </div>
+            <div id="riskText" style="font-size: 0.9rem; color: #4b5563;">
+                Input turnover to analyze late fee slabs.
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <div class="footer-name">Prepared by CA Shreyansh Kothari</div>
+            <div class="footer-sub">Professional Chartered Accountant Services</div>
+            
+            <div class="footer-contacts">
+                <a href="tel:+918910638659" class="contact-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    +91 8910638659
+                </a>
+                
+                <a href="mailto:cashreyanshkothari@gmail.com" class="contact-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    cashreyanshkothari@gmail.com
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    const LIMIT_9 = 20000000;   // 2 Cr
+    const LIMIT_9C = 50000000;  // 5 Cr
+    const LIMIT_HIGH = 200000000; // 20 Cr
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0
+        }).format(amount);
+    }
+
+    function runLogic() {
+        // 1. Sum Inputs
+        const inputs = document.querySelectorAll('.calc-input');
+        let total = 0;
+        inputs.forEach(inp => total += Number(inp.value));
+
+        // 2. Animate Total
+        document.getElementById('displayTotal').innerText = formatCurrency(total);
+
+        // 3. Logic: GSTR 9
+        updateStatus('card9', 'badge9', total, LIMIT_9, {
+            below: { text: "Exempt", style: "bg-green", border: "border-green" },
+            above: { text: "Mandatory", style: "bg-red", border: "border-red" }
+        });
+
+        // 4. Logic: GSTR 9C
+        updateStatus('card9c', 'badge9c', total, LIMIT_9C, {
+            below: { text: "Not Required", style: "bg-green", border: "border-green" },
+            above: { text: "Mandatory", style: "bg-red", border: "border-red" }
+        });
+
+        // 5. Logic: Late Fees
+        updateRisk(total);
+    }
+
+    function updateStatus(cardId, badgeId, total, limit, config) {
+        const card = document.getElementById(cardId);
+        const badge = document.getElementById(badgeId);
+
+        // Reset classes
+        card.className = "status-card";
+        badge.className = "badge";
+
+        if (total === 0) {
+            card.classList.add("border-gray");
+            badge.classList.add("bg-gray");
+            badge.innerText = "Waiting";
+            return;
+        }
+
+        if (total <= limit) {
+            card.classList.add(config.below.border);
+            badge.classList.add(config.below.style);
+            badge.innerText = config.below.text;
+        } else {
+            card.classList.add(config.above.border);
+            badge.classList.add(config.above.style);
+            badge.innerText = config.above.text;
+        }
+    }
+
+    function updateRisk(total) {
+        const riskBox = document.getElementById('riskText');
+        
+        if (total === 0) {
+            riskBox.innerHTML = "Input turnover to analyze late fee slabs.";
+            return;
+        }
+
+        let fee = "";
+        let cap = "";
+
+        if (total <= LIMIT_9C) {
+            fee = "₹ 50 / day";
+            cap = "0.04% of T/O";
+        } else if (total <= LIMIT_HIGH) {
+            fee = "₹ 100 / day";
+            cap = "0.04% of T/O";
+        } else {
+            fee = "₹ 200 / day";
+            cap = "0.50% of T/O";
+        }
+
+        riskBox.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span>Daily Fee:</span>
+                <span style="font-weight:700; color:#dc2626;">${fee}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span>Max Cap:</span>
+                <span style="font-weight:700; color:#dc2626;">${cap}</span>
+            </div>
+        `;
+    }
+
+    function resetAll() {
+        document.getElementById('calculator').reset();
+        runLogic();
+    }
+</script>
+
+</body>
+</html>
